@@ -69,11 +69,14 @@ public class App {
                 case "D":
 
                     System.out.println("Here is all deposits:");
-                    System.out.println(getAllDeposits(transactions));
+                    System.out.println(getAllDeposits());
 
                     break;
                 case "P":
-                    System.out.println(choice);
+
+                    System.out.println("Here is all payments:");
+                    System.out.println(getAllPayments());
+
                     break;
                 case "R":
                     System.out.println(choice);
@@ -173,7 +176,7 @@ public class App {
         return transactions;
     }
 
-    private static ArrayList<Transaction> getAllDeposits(ArrayList<Transaction> transactions) {
+    private static ArrayList<Transaction> getAllDeposits() {
         ArrayList<Transaction> deposits = new ArrayList<>();
 
         for(Transaction transaction: transactions){
@@ -184,4 +187,17 @@ public class App {
 
         return deposits;
     }
+
+    private static ArrayList<Transaction> getAllPayments() {
+        ArrayList<Transaction> payments = new ArrayList<>();
+
+        for(Transaction transaction: transactions){
+            if (transaction.getAmount() < 0) {
+                payments.add(transaction);
+            }
+        }
+
+        return payments;
+    }
+
 }

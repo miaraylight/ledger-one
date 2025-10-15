@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48131ff8-977b-4550-a152-f1cfc352af04" name="Changes" comment="read and convert transactions">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="48131ff8-977b-4550-a152-f1cfc352af04" name="Changes" comment="add method to get all deposits">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/miaraylight/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/miaraylight/App.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -115,7 +114,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760549265459</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="add method to get all deposits">
+      <option name="closed" value="true" />
+      <created>1760550519930</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1760550519930</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -123,7 +130,8 @@
     <MESSAGE value="add Transaction class" />
     <MESSAGE value="add menu logic" />
     <MESSAGE value="read and convert transactions" />
-    <option name="LAST_COMMIT_MESSAGE" value="read and convert transactions" />
+    <MESSAGE value="add method to get all deposits" />
+    <option name="LAST_COMMIT_MESSAGE" value="add method to get all deposits" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
