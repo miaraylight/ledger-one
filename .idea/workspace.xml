@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48131ff8-977b-4550-a152-f1cfc352af04" name="Changes" comment="add method to search by vendor">
+    <list default="true" id="48131ff8-977b-4550-a152-f1cfc352af04" name="Changes" comment="add methods to filter by current month and year">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/miaraylight/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/miaraylight/App.java" afterDir="false" />
     </list>
@@ -139,7 +139,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760552155610</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="add methods to filter by current month and year">
+      <option name="closed" value="true" />
+      <created>1760562869961</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1760562869961</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -161,7 +169,8 @@
     <MESSAGE value="add method to get all deposits" />
     <MESSAGE value="add method to get all payments" />
     <MESSAGE value="add method to search by vendor" />
-    <option name="LAST_COMMIT_MESSAGE" value="add method to search by vendor" />
+    <MESSAGE value="add methods to filter by current month and year" />
+    <option name="LAST_COMMIT_MESSAGE" value="add methods to filter by current month and year" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

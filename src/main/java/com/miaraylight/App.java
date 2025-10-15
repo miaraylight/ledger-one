@@ -109,7 +109,7 @@ public class App {
                     break;
                 case 2:
 
-                    System.out.println(choice);
+                    System.out.println(getPreviousMonthTransactions());
 
                     break;
                 case 3:
@@ -268,5 +268,29 @@ public class App {
 
         return filteredByYearTransactions;
     }
+
+    private static ArrayList<Transaction> getPreviousMonthTransactions() {
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfCurrentMonth = today.withDayOfMonth(1);
+        LocalDate firstDayOfPreviousMonth = firstDayOfCurrentMonth.minusMonths(1);
+
+        System.out.printf("Transactions from %s to %s \n", firstDayOfPreviousMonth, firstDayOfCurrentMonth);
+
+        ArrayList<Transaction> filteredByMonthTransactions = new ArrayList<>();
+
+        for (Transaction transaction: transactions) {
+            LocalDate transactionDate = transaction.getDate();
+            if (transactionDate.isAfter(firstDayOfPreviousMonth) && transactionDate.isBefore(firstDayOfCurrentMonth)) {
+                filteredByMonthTransactions.add(transaction);
+            }
+        }
+
+        if (filteredByMonthTransactions.isEmpty()) {
+            System.out.println("No transactions for previous month");
+        }
+
+        return filteredByMonthTransactions;
+    }
+
 
 }
