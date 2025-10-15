@@ -10,16 +10,13 @@ import java.util.Scanner;
 
 public class App {
     final static Scanner scanner = new Scanner(System.in);
+    final static  ArrayList<Transaction> transactions = getAllTransactions("transactions.csv");
     public static void main(String[] args) {
         System.out.println("Here is my ledger app lives");
 
-        //runMainMenu();
+        runMainMenu();
 
-        ArrayList<Transaction> transactions = getAllTransactions("transactions.csv");
 
-        for (Transaction transaction: transactions) {
-            System.out.println(transaction.toString());
-        }
     }
 // Run methods
     public static void runMainMenu() {
@@ -59,20 +56,27 @@ public class App {
         while (running) {
             displayLedgerMenu();
             System.out.println("Choose an option: ");
-            String choise = scanner.nextLine().trim().toUpperCase();
+            String choice = scanner.nextLine().trim().toUpperCase();
 
-            switch (choise) {
+            switch (choice) {
+                // ToDo make it pretty output later
                 case "A":
-                    System.out.println(choise);
+
+                    System.out.println("Here is all transactions:");
+                    System.out.println(transactions);
+
                     break;
                 case "D":
-                    System.out.println(choise);
+
+                    System.out.println("Here is all deposits:");
+                    System.out.println(getAllDeposits(transactions));
+
                     break;
                 case "P":
-                    System.out.println(choise);
+                    System.out.println(choice);
                     break;
                 case "R":
-                    System.out.println(choise);
+                    System.out.println(choice);
                     runReportMenu();
                     break;
                 case "H":
@@ -167,5 +171,17 @@ public class App {
             System.out.println(e);
         }
         return transactions;
+    }
+
+    private static ArrayList<Transaction> getAllDeposits(ArrayList<Transaction> transactions) {
+        ArrayList<Transaction> deposits = new ArrayList<>();
+
+        for(Transaction transaction: transactions){
+            if (transaction.getAmount() > 0) {
+                deposits.add(transaction);
+            }
+        }
+
+        return deposits;
     }
 }
