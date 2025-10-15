@@ -1,5 +1,11 @@
 package com.miaraylight;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
@@ -7,9 +13,15 @@ public class App {
     public static void main(String[] args) {
         System.out.println("Here is my ledger app lives");
 
-        runMainMenu();
-    }
+        //runMainMenu();
 
+        ArrayList<Transaction> transactions = getAllTransactions("transactions.csv");
+
+        for (Transaction transaction: transactions) {
+            System.out.println(transaction.toString());
+        }
+    }
+// Run methods
     public static void runMainMenu() {
         boolean running = true;
 
@@ -106,7 +118,7 @@ public class App {
         }
     }
 
-
+// Display methods
     private static void displayReportMenu() {
         System.out.println("[1] Month To Date");
         System.out.println("[2] Previous Month");
@@ -128,5 +140,32 @@ public class App {
         System.out.println("[P] Make Payment (Debit)");
         System.out.println("[L] Ledger");
         System.out.println("[X] Exit");
+    }
+
+    private static ArrayList<Transaction> getAllTransactions(String filename) {
+        ArrayList<Transaction> transactions = new ArrayList<>();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))){
+            String line;
+            bufferedReader.readLine();
+
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] parts = line.split("\\|");
+
+                LocalDate date = LocalDate.parse(parts[0]);
+                LocalTime time = LocalTime.parse(parts[1]);
+                String description = parts[2];
+                String vendor = parts[3];
+                float amount = Float.parseFloat(parts[4]);
+
+                Transaction transaction = new Transaction(date, time, description, vendor, amount);
+
+                transactions.add(transaction);
+            }
+        } catch (IOException e) {
+            System.out.println("Error:");
+            System.out.println(e);
+        }
+        return transactions;
     }
 }
