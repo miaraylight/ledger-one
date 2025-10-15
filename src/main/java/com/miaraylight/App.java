@@ -99,20 +99,24 @@ public class App {
         while (running) {
             displayReportMenu();
             System.out.println("Choose an option: ");
-            int choise = scanner.nextInt();
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // eat it
 
-            switch (choise) {
+            switch (choice) {
                 case 1:
-                    System.out.println(choise);
+                    System.out.println(choice);
                     break;
                 case 2:
-                    System.out.println(choise);
+                    System.out.println(choice);
                     break;
                 case 3:
-                    System.out.println(choise);
+                    System.out.println(choice);
                     break;
                 case 4:
-                    System.out.println(choise);
+
+                    String vendor = scanner.nextLine().trim().toLowerCase();
+                    System.out.println(findByVendor(vendor));
+
                     break;
                 case 0:
                     running = false;
@@ -198,6 +202,22 @@ public class App {
         }
 
         return payments;
+    }
+
+    private static ArrayList<Transaction> findByVendor(String vendor) {
+        ArrayList<Transaction> transactionsByVendor = new ArrayList<>();
+
+        for (Transaction transaction: transactions) {
+            if (vendor.equals(transaction.getVendor().toLowerCase())) {
+                transactionsByVendor.add(transaction);
+            }
+        }
+
+        if(transactionsByVendor.isEmpty()) {
+            System.out.println("Nothing found by this vendor");
+        }
+
+        return transactionsByVendor;
     }
 
 }
