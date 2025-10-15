@@ -16,7 +16,6 @@ public class App {
 
         runMainMenu();
 
-
     }
 // Run methods
     public static void runMainMenu() {
@@ -104,16 +103,22 @@ public class App {
 
             switch (choice) {
                 case 1:
-                    System.out.println(choice);
+
+                    System.out.println(getMonthToDateTransactions());
+
                     break;
                 case 2:
+
                     System.out.println(choice);
+
                     break;
                 case 3:
-                    System.out.println(choice);
+                    System.out.println(getYearToDateTransactions());
+
                     break;
                 case 4:
 
+                    System.out.println("Please enter vendors name:");
                     String vendor = scanner.nextLine().trim().toLowerCase();
                     System.out.println(findByVendor(vendor));
 
@@ -218,6 +223,50 @@ public class App {
         }
 
         return transactionsByVendor;
+    }
+
+    private static ArrayList<Transaction> getMonthToDateTransactions() {
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfMonth = today.withDayOfMonth(1);
+
+        System.out.printf("Transactions from %s to %s \n", firstDayOfMonth, today);
+
+        ArrayList<Transaction> filteredByMonthTransactions = new ArrayList<>();
+
+        for (Transaction transaction: transactions) {
+            LocalDate transactionDate = transaction.getDate();
+            if (transactionDate.isAfter(firstDayOfMonth) && transactionDate.isBefore(today)) {
+                filteredByMonthTransactions.add(transaction);
+            }
+        }
+
+        if (filteredByMonthTransactions.isEmpty()) {
+            System.out.println("No transactions at this month");
+        }
+
+        return filteredByMonthTransactions;
+    }
+
+    private static ArrayList<Transaction> getYearToDateTransactions() {
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfYear = today.withDayOfYear(1);
+
+        System.out.printf("Transactions from %s to %s \n", firstDayOfYear, today);
+
+        ArrayList<Transaction> filteredByYearTransactions = new ArrayList<>();
+
+        for (Transaction transaction: transactions) {
+            LocalDate transactionDate = transaction.getDate();
+            if (transactionDate.isAfter(firstDayOfYear) && transactionDate.isBefore(today)) {
+                filteredByYearTransactions.add(transaction);
+            }
+        }
+
+        if (filteredByYearTransactions.isEmpty()) {
+            System.out.println("No transactions at this year");
+        }
+
+        return filteredByYearTransactions;
     }
 
 }
