@@ -2,6 +2,7 @@ package com.miaraylight;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Transaction {
     private LocalDate date;
@@ -12,7 +13,9 @@ public class Transaction {
 
     public Transaction(LocalDate date, LocalTime time, String description, String vendor, float amount) {
         this.date = date;
-        this.time = time;
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String formattedTime = LocalTime.now().format(timeFormatter);
+        this.time = LocalTime.parse(formattedTime);
         this.description = description;
         this.vendor = vendor;
         this.amount = amount;
@@ -56,6 +59,10 @@ public class Transaction {
 
     public void setAmount(float amount) {
         this.amount = amount;
+    }
+
+    public String toCsv() {
+        return String.format("%s|%s|%s|%s|%s", this.date.toString(), this.time.toString(), this.description, this.vendor, Float.toString(this.amount));
     }
 
     @Override

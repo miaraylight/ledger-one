@@ -1,10 +1,9 @@
 package com.miaraylight;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,10 +13,9 @@ public class App {
     public static void main(String[] args) {
         System.out.println("Here is my ledger app lives");
         runMainMenu();
-
-
     }
-// Run methods
+
+    // Run methods
     public static void runMainMenu() {
         boolean running = true;
 
@@ -28,7 +26,20 @@ public class App {
 
             switch (choise) {
                 case "A":
-                    System.out.println(choise);
+                    LocalDate date = LocalDate.now();
+                    LocalTime time = LocalTime.now();
+                    System.out.println("enter desc");
+                    String description = scanner.nextLine().trim();
+                    System.out.println("vendor");
+                    String vendor = scanner.nextLine().trim();
+                    System.out.println("amount");
+                    float amount = scanner.nextFloat();
+                    scanner.nextLine();
+
+                    Transaction deposit = new Transaction(date, time, description, vendor, amount);
+
+                    System.out.println(deposit.toCsv());
+
                     break;
                 case "P":
                     System.out.println(choise);
@@ -265,6 +276,8 @@ public class App {
         System.out.println("[X] Exit");
     }
 
+
+    // Read methods
     private static ArrayList<Transaction> getAllTransactions(String filename) {
         ArrayList<Transaction> transactions = new ArrayList<>();
 
@@ -468,5 +481,9 @@ public class App {
 
         return filteredTransactionsByDescription;
     }
+
+    // Write methods
+
+
 
 }
