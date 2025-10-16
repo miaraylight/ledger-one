@@ -98,8 +98,17 @@ public class App {
         while (running) {
             displayReportMenu();
             System.out.println("Choose an option: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // eat it
+            String input = scanner.nextLine().trim();
+            int choice = -1;
+
+
+            try {
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Provide numbers please");
+                System.out.println(e);
+            }
+
 
             switch (choice) {
                 case 1:
@@ -139,13 +148,31 @@ public class App {
         while (running) {
             displaySearchMenu();
             System.out.println("Choose an option: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // eat it
+            String input = scanner.nextLine().trim();
+            int choice = -1;
+
+
+            try {
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Provide numbers please");
+                System.out.println(e);
+            }
 
             switch (choice) {
                 case 1:
+                    System.out.println("Please enter start date ex. 2023-01-30:");
+                    LocalDate startDate = LocalDate.parse(scanner.nextLine().trim());
 
-                    System.out.println("Date");
+                    System.out.println("Please enter end date ex. 2024-01-30:");
+                    LocalDate endDate = LocalDate.parse(scanner.nextLine().trim());
+
+                    if (endDate.isBefore(startDate)) {
+                        System.out.println("Error: invalid end date provided");
+                        break;
+                    }
+
+                    System.out.println(filterByDate(startDate, endDate));
 
                     break;
                 case 2:
@@ -176,7 +203,7 @@ public class App {
 
 
     // Display methods
-private static void displaySearchMenu() {
+    private static void displaySearchMenu() {
     System.out.println("[1] Date");
     System.out.println("[2] Description");
     System.out.println("[3] Vendor");
@@ -363,6 +390,23 @@ private static void displaySearchMenu() {
         }
 
         return filteredByYearTransactions;
+    }
+
+    private static ArrayList<Transaction> filterByDate(LocalDate startDate, LocalDate endDate) {
+        ArrayList<Transaction> filteredByDateTransactions = new ArrayList<>();
+
+        for (Transaction transaction : transactions) {
+            LocalDate transactionDate = transaction.getDate();
+            if (!transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)) {
+                filteredByDateTransactions.add(transaction);
+            }
+        }
+
+        if (filteredByDateTransactions.isEmpty()) {
+            System.out.println("No transactions for this date");
+        }
+
+        return filteredByDateTransactions;
     }
 
 }
