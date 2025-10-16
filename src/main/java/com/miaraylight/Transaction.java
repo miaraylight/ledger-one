@@ -14,7 +14,7 @@ public class Transaction {
     public Transaction(LocalDate date, LocalTime time, String description, String vendor, float amount) {
         this.date = date;
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-        String formattedTime = LocalTime.now().format(timeFormatter);
+        String formattedTime = time.format(timeFormatter);
         this.time = LocalTime.parse(formattedTime);
         this.description = description;
         this.vendor = vendor;

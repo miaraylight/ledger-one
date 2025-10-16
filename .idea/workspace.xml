@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48131ff8-977b-4550-a152-f1cfc352af04" name="Changes" comment="add method to create transactions for adding deposit and making payments">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="48131ff8-977b-4550-a152-f1cfc352af04" name="Changes" comment="fix writing new line in csv">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/miaraylight/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/miaraylight/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/miaraylight/Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/miaraylight/Transaction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,7 +218,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760590590340</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="fix writing new line in csv">
+      <option name="closed" value="true" />
+      <created>1760639482296</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1760639482296</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -249,6 +256,7 @@
     <MESSAGE value="add method to filter by description" />
     <MESSAGE value="add toCsv method to Transaction class" />
     <MESSAGE value="add method to create transactions for adding deposit and making payments" />
-    <option name="LAST_COMMIT_MESSAGE" value="add method to create transactions for adding deposit and making payments" />
+    <MESSAGE value="fix writing new line in csv" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix writing new line in csv" />
   </component>
 </project>
