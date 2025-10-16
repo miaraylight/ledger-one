@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="48131ff8-977b-4550-a152-f1cfc352af04" name="Changes" comment="add method to filter by date in given range">
+    <list default="true" id="48131ff8-977b-4550-a152-f1cfc352af04" name="Changes" comment="add method to filter by amount in given range">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/miaraylight/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/miaraylight/App.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -170,7 +171,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760580870760</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="add method to filter by amount in given range">
+      <option name="closed" value="true" />
+      <created>1760581934664</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1760581934664</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -196,7 +205,8 @@
     <MESSAGE value="add method to show previous month transactions" />
     <MESSAGE value="add method to show previous year transactions" />
     <MESSAGE value="add method to filter by date in given range" />
-    <option name="LAST_COMMIT_MESSAGE" value="add method to filter by date in given range" />
+    <MESSAGE value="add method to filter by amount in given range" />
+    <option name="LAST_COMMIT_MESSAGE" value="add method to filter by amount in given range" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

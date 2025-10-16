@@ -178,6 +178,22 @@ public class App {
                 case 2:
 
                     System.out.println("Desc");
+                    System.out.println("Please enter description:");
+                    String description = scanner.nextLine().trim();
+
+                    if (description.isEmpty() || description.isBlank()) {
+                        System.out.println("Enter something please");
+                        break;
+                    }
+
+                    ArrayList<Transaction> result = filterTransactionsByDescription(description);
+
+                    if (result.isEmpty()) {
+                        System.out.println("Nothing found");
+                        break;
+                    }
+
+                    System.out.println(filterTransactionsByDescription(description));
 
                     break;
                 case 3:
@@ -438,6 +454,19 @@ public class App {
         }
 
         return filteredByAmountTransactions;
+    }
+
+    private static ArrayList<Transaction> filterTransactionsByDescription(String description) {
+        ArrayList<Transaction> filteredTransactionsByDescription = new ArrayList<>();
+
+        for (Transaction transaction: transactions) {
+            String transactionDescription = transaction.getDescription();
+            if (transactionDescription.contains(description)) {
+                filteredTransactionsByDescription.add(transaction);
+            }
+        }
+
+        return filteredTransactionsByDescription;
     }
 
 }
