@@ -498,7 +498,7 @@ public class App {
 
         try{
             FileWriter writer = new FileWriter(filename, true);
-            writer.write(transaction.toCsv() + "\n");
+            writer.write("\n"+transaction.toCsv());
             writer.close();
         } catch (IOException e) {
             System.out.println("Error:");
