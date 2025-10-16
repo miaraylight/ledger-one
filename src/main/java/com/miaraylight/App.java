@@ -189,6 +189,20 @@ public class App {
                 case 4:
 
                     System.out.println("Amount");
+                    System.out.println("Please enter lowest amount:");
+                    float lowAmount = scanner.nextFloat();
+                    scanner.nextLine();
+
+                    System.out.println("Please enter highest amount:");
+                    float highAmount = scanner.nextFloat();
+                    scanner.nextLine();
+
+                    if (lowAmount > highAmount) {
+                        System.out.println("Error: invalid high amount provided");
+                        break;
+                    }
+
+                    System.out.println(filterByAmount(lowAmount, highAmount));
 
                     break;
                 case 0:
@@ -407,6 +421,23 @@ public class App {
         }
 
         return filteredByDateTransactions;
+    }
+
+    private static ArrayList<Transaction> filterByAmount(float lowAmount, float highAmount) {
+        ArrayList<Transaction> filteredByAmountTransactions = new ArrayList<>();
+
+        for (Transaction transaction : transactions) {
+            float transactionAmount = transaction.getAmount();
+            if (transactionAmount >= lowAmount && transactionAmount <= highAmount) {
+                filteredByAmountTransactions.add(transaction);
+            }
+        }
+
+        if (filteredByAmountTransactions.isEmpty()) {
+            System.out.println("No transactions in this range");
+        }
+
+        return filteredByAmountTransactions;
     }
 
 }
