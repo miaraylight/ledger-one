@@ -13,8 +13,8 @@ public class App {
     final static  ArrayList<Transaction> transactions = getAllTransactions("transactions.csv");
     public static void main(String[] args) {
         System.out.println("Here is my ledger app lives");
-
         runMainMenu();
+
 
     }
 // Run methods
@@ -103,12 +103,10 @@ public class App {
 
             switch (choice) {
                 case 1:
-
                     System.out.println(getMonthToDateTransactions());
 
                     break;
                 case 2:
-
                     System.out.println(getPreviousMonthTransactions());
 
                     break;
@@ -117,10 +115,11 @@ public class App {
 
                     break;
                 case 4:
+                    System.out.println(getPreviousYearTransactions());
 
-                    System.out.println("Please enter vendors name:");
-                    String vendor = scanner.nextLine().trim().toLowerCase();
-                    System.out.println(findByVendor(vendor));
+                    break;
+                case 5:
+                    runSearchMenu();
 
                     break;
                 case 0:
@@ -134,12 +133,63 @@ public class App {
         }
     }
 
-// Display methods
+    public static void runSearchMenu() {
+        boolean running = true;
+
+        while (running) {
+            displaySearchMenu();
+            System.out.println("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // eat it
+
+            switch (choice) {
+                case 1:
+
+                    System.out.println("Date");
+
+                    break;
+                case 2:
+
+                    System.out.println("Desc");
+
+                    break;
+                case 3:
+                    System.out.println("Please enter vendors name:");
+                    String vendor = scanner.nextLine().trim().toLowerCase();
+                    System.out.println(findByVendor(vendor));
+
+                    break;
+                case 4:
+
+                    System.out.println("Amount");
+
+                    break;
+                case 0:
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+
+        }
+    }
+
+
+    // Display methods
+private static void displaySearchMenu() {
+    System.out.println("[1] Date");
+    System.out.println("[2] Description");
+    System.out.println("[3] Vendor");
+    System.out.println("[4] Amount");
+    System.out.println("[0] Back");
+}
+
     private static void displayReportMenu() {
         System.out.println("[1] Month To Date");
         System.out.println("[2] Previous Month");
         System.out.println("[3] Year To Date");
-        System.out.println("[4] Search by Vendor");
+        System.out.println("[4] Previous Year");
+        System.out.println("[5] Custom search");
         System.out.println("[0] Back");
     }
 
@@ -292,5 +342,27 @@ public class App {
         return filteredByMonthTransactions;
     }
 
+    private static ArrayList<Transaction> getPreviousYearTransactions() {
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfCurrentYear = today.withMonth(1).withDayOfMonth(1);
+        LocalDate firstDayOfPreviousYear = firstDayOfCurrentYear.minusYears(1);
+
+        System.out.printf("Transactions from %s to %s \n", firstDayOfPreviousYear, firstDayOfCurrentYear);
+
+        ArrayList<Transaction> filteredByYearTransactions = new ArrayList<>();
+
+        for (Transaction transaction: transactions) {
+            LocalDate transactionDate = transaction.getDate();
+            if (transactionDate.isAfter(firstDayOfPreviousYear) && transactionDate.isBefore(firstDayOfCurrentYear)) {
+                filteredByYearTransactions.add(transaction);
+            }
+        }
+
+        if (filteredByYearTransactions.isEmpty()) {
+            System.out.println("No transactions for previous year");
+        }
+
+        return filteredByYearTransactions;
+    }
 
 }
