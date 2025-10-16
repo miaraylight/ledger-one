@@ -3,7 +3,6 @@ package com.miaraylight;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,32 +19,20 @@ public class App {
         boolean running = true;
 
         while (running) {
-            displayHomeScreen();
+            displayMainMenu();
             System.out.println("Choose an option: ");
-            String choise = scanner.nextLine().trim().toUpperCase();
+            String choice = scanner.nextLine().trim().toUpperCase();
 
-            switch (choise) {
-                case "A":
-                    LocalDate date = LocalDate.now();
-                    LocalTime time = LocalTime.now();
-                    System.out.println("enter desc");
-                    String description = scanner.nextLine().trim();
-                    System.out.println("vendor");
-                    String vendor = scanner.nextLine().trim();
-                    System.out.println("amount");
-                    float amount = scanner.nextFloat();
-                    scanner.nextLine();
-
-                    Transaction deposit = new Transaction(date, time, description, vendor, amount);
-
-                    System.out.println(deposit.toCsv());
-
+            switch (choice) {
+                case "D":
+                   createTransaction(true, "transactions.csv");
+                    System.out.println("Deposit added.");
                     break;
                 case "P":
-                    System.out.println(choise);
+                    createTransaction(false, "transactions.csv");
+                    System.out.println("Payment recorded.");
                     break;
                 case "L":
-                    System.out.println(choise);
                     runLedgerMenu();
                     break;
                 case "X":
@@ -56,7 +43,6 @@ public class App {
                     System.out.println("Invalid choice. Please try again.");
             }
 
-            System.out.println();
         }
     }
 
@@ -99,7 +85,6 @@ public class App {
                     System.out.println("Invalid choice. Please try again.");
             }
 
-            System.out.println();
         }
     }
 
@@ -149,7 +134,6 @@ public class App {
                     System.out.println("Invalid choice. Please try again.");
             }
 
-            System.out.println();
         }
     }
 
@@ -269,7 +253,7 @@ public class App {
         System.out.println("[H] Home");
     }
 
-    private static void displayHomeScreen() {
+    private static void displayMainMenu() {
         System.out.println("[D] Add Deposit");
         System.out.println("[P] Make Payment (Debit)");
         System.out.println("[L] Ledger");
@@ -483,7 +467,45 @@ public class App {
     }
 
     // Write methods
+    private static void createTransaction(boolean isDeposit, String filename) {
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now();
 
+        System.out.println("Enter description:");
+        String description = scanner.nextLine().trim();
+
+        System.out.println("Enter vendor:");
+        String vendor = scanner.nextLine().trim();
+
+        System.out.println("Enter amount:");
+        float amount = scanner.nextFloat();
+        scanner.nextLine();
+
+        if (isDeposit) {
+            if (amount < 0) {
+                amount = -amount;
+            }
+        } else {
+
+        if (amount > 0) {
+            amount = -amount;
+        }
+        }
+
+        Transaction transaction = new Transaction(date, time, description, vendor, amount);
+
+        transactions.add(transaction);
+
+        try{
+            FileWriter writer = new FileWriter(filename, true);
+            writer.write(transaction.toCsv() + "\n");
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Error:");
+            System.out.println(e);
+        }
+
+    }
 
 
 }
