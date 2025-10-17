@@ -1,6 +1,9 @@
 package com.miaraylight;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
@@ -8,13 +11,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    final static Scanner scanner = new Scanner(System.in);
     public static final String TRANSACTION_FILE = "transactions.csv";
-    final static  ArrayList<Transaction> transactions = getAllTransactions(TRANSACTION_FILE);
+    final static Scanner scanner = new Scanner(System.in);
+    final static ArrayList<Transaction> transactions = getAllTransactions();
+
     public static void main(String[] args) {
         runWelcome();
 
-        //runMainMenu();
+        runMainMenu();
     }
 
     // Run methods
@@ -28,12 +32,12 @@ public class App {
 
             switch (choice) {
                 case "D":
-                   Transaction newDeposit = createTransaction(true, TRANSACTION_FILE);
-                   formatAsCard(newDeposit);
+                    Transaction newDeposit = createTransaction(true);
+                    formatAsCard(newDeposit);
                     System.out.println("✅ Deposit successfully added.");
                     break;
                 case "P":
-                    Transaction newPayment = createTransaction(false, TRANSACTION_FILE);
+                    Transaction newPayment = createTransaction(false);
                     formatAsCard(newPayment);
                     System.out.println("💰 Payment successfully recorded.");
                     break;
@@ -221,61 +225,28 @@ public class App {
 
     public static void printGoodbye() {
         System.out.println();
-        System.out.println(AnsiColors.GREEN + AnsiColors.BOLD +
-                "\nThanks for using LedgerOne! ✨\nKeep tracking your finances like a pro! 💼💸" + AnsiColors.RESET);
+        System.out.println(AnsiColors.GREEN + AnsiColors.BOLD + "\nThanks for using LedgerOne! ✨\nKeep tracking your finances like a pro! 💼💸" + AnsiColors.RESET);
     }
 
     public static void displayHeadline(String text) {
-        String formattedStr = String.format("         %s           ", text);
-        System.out.println(AnsiColors.BLUE + AnsiColors.BOLD +
-                "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
-        System.out.println( AnsiColors.YELLOW + formattedStr + AnsiColors.RESET);
+        String formattedStr = String.format("         %s", text);
+        System.out.println(AnsiColors.BLUE + AnsiColors.BOLD + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+        System.out.println(AnsiColors.YELLOW + formattedStr + AnsiColors.RESET);
         System.out.println("╚════════════════════════════════════════════╝" + AnsiColors.RESET);
     }
 
     public static void runWelcome() {
-        final String logo1 = """
-                _______________________1¶¶¶_______________________
-                ________________________¶¶¶_______________________
-                ________________________¶¶¶_______________________
-                ___________¶1___¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶1___¶¶__________
-                _________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶________
-                _________¶¶¶¶¶¶¶¶______¶¶¶¶1_____1¶¶¶¶¶¶¶1________
-                __________¶¶¶___________¶¶¶___________¶¶¶_________
-                __________¶¶¶___________¶¶¶___________¶¶¶_________
-                ________¶¶¶¶¶¶__________¶¶¶__________¶¶¶¶¶________
-                ________¶¶¶¶¶¶__________¶¶¶__________¶¶¶¶¶________
-                ________¶__¶_¶__________¶¶¶_________1¶_¶_¶1_______
-                _______1¶_¶¶_¶¶_________¶¶¶_________¶1_¶_1¶_______
-                _______¶¶_1¶__¶_________¶¶¶________¶¶__¶__¶¶______
-                ______¶¶__1¶__¶¶________¶¶¶________¶___¶___¶______
-                ______¶___¶¶___¶1_______¶¶¶_______¶¶___¶___¶¶_____
-                _____¶¶___¶¶___1¶_______¶¶¶______1¶____¶____¶1____
-                ____1¶____¶¶____¶¶______¶¶¶______¶1____¶____1¶____
-                ____¶1____¶¶_____¶______¶¶¶_____¶¶_____¶_____¶¶___
-                ___¶¶_____¶¶_____¶¶_____¶¶¶_____¶______¶______¶___
-                ___¶______¶¶______¶¶____¶¶¶____¶¶______¶______¶¶__
-                __¶________¶_______¶____¶¶¶____¶_______¶_______¶__
-                ¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶__¶¶¶_1¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶
-                ¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶1_¶¶¶_¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶
-                _¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶___¶¶¶__1¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶
-                ___¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶_____¶¶¶_____¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶1__
-                ______1¶¶¶¶¶¶¶¶1___1¶¶¶¶¶¶¶¶¶¶¶____¶¶¶¶¶¶¶¶¶______
-                ________________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶_______________
-                _______________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶_______________
-                ________________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶_______________
-                """;
-        final String logo = """
-                    ▄                 █                        ▄▄▄▄              \s
-                    █       ▄▄▄    ▄▄▄█   ▄▄▄▄   ▄▄▄    ▄ ▄▄  ▄▀  ▀▄ ▄ ▄▄    ▄▄▄ \s
-                    █      █▀  █  █▀ ▀█  █▀ ▀█  █▀  █   █▀  ▀ █    █ █▀  █  █▀  █\s
-                    █      █▀▀▀▀  █   █  █   █  █▀▀▀▀   █     █    █ █   █  █▀▀▀▀\s
-                    █▄▄▄▄▄ ▀█▄▄▀  ▀█▄██  ▀█▄▀█  ▀█▄▄▀   █      █▄▄█  █   █  ▀█▄▄▀\s
-                                          ▄  █                                   \s
-                                           ▀▀                                    \s""";
 
-        final String[] COLORS = {
-                "\u001B[31m", // Red
+        final String logo = """
+                ▄                 █                        ▄▄▄▄              \s
+                █       ▄▄▄    ▄▄▄█   ▄▄▄▄   ▄▄▄    ▄ ▄▄  ▄▀  ▀▄ ▄ ▄▄    ▄▄▄ \s
+                █      █▀  █  █▀ ▀█  █▀ ▀█  █▀  █   █▀  ▀ █    █ █▀  █  █▀  █\s
+                █      █▀▀▀▀  █   █  █   █  █▀▀▀▀   █     █    █ █   █  █▀▀▀▀\s
+                █▄▄▄▄▄ ▀█▄▄▀  ▀█▄██  ▀█▄▀█  ▀█▄▄▀   █      █▄▄█  █   █  ▀█▄▄▀\s
+                                      ▄  █                                   \s
+                                       ▀▀                                    \s""";
+
+        final String[] COLORS = {"\u001B[31m", // Red
                 "\u001B[33m", // Yellow
                 "\u001B[32m", // Green
                 "\u001B[36m", // Cyan
@@ -298,22 +269,21 @@ public class App {
             }
             System.out.println(RESET);
         } catch (InterruptedException e) {
-            System.out.println(e);
+            System.out.println("Error:" + e.getMessage());
         }
 
         // welcome banner
-        System.out.println(AnsiColors.BLUE + AnsiColors.BOLD +
-                "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+        System.out.println(AnsiColors.BLUE + AnsiColors.BOLD + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
         System.out.println(AnsiColors.YELLOW + "          💰 Welcome to LedgerOne 💰 " + AnsiColors.RESET);
         System.out.println("╚════════════════════════════════════════════╝" + AnsiColors.RESET);
 
         try {
             for (int i = 0; i < 17; i++) {
                 System.out.print(COLORS[colorIndex % COLORS.length] + "^-^" + RESET);
-                Thread.sleep(20); // Adjust speed here (e.g., 50 or 10 ms)
+                Thread.sleep(20);
                 colorIndex++;
             }
-            System.out.println(); // Move to the next line after loading
+            System.out.println();
         } catch (InterruptedException e) {
             System.out.println("Loading interrupted: " + e.getMessage());
         }
@@ -323,10 +293,10 @@ public class App {
 
 
     // Read methods
-    private static ArrayList<Transaction> getAllTransactions(String filename) {
+    private static ArrayList<Transaction> getAllTransactions() {
         ArrayList<Transaction> transactions = new ArrayList<>();
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))){
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(TRANSACTION_FILE))) {
             String line;
             bufferedReader.readLine();
 
@@ -344,8 +314,7 @@ public class App {
                 transactions.add(transaction);
             }
         } catch (IOException e) {
-            System.out.println("Error:");
-            System.out.println(e);
+            System.out.println("Error:" + e.getMessage());
         }
         return transactions;
     }
@@ -353,7 +322,7 @@ public class App {
     private static ArrayList<Transaction> getAllDeposits() {
         ArrayList<Transaction> deposits = new ArrayList<>();
 
-        for(Transaction transaction: transactions){
+        for (Transaction transaction : transactions) {
             if (transaction.getAmount() > 0) {
                 deposits.add(transaction);
             }
@@ -365,7 +334,7 @@ public class App {
     private static ArrayList<Transaction> getAllPayments() {
         ArrayList<Transaction> payments = new ArrayList<>();
 
-        for(Transaction transaction: transactions){
+        for (Transaction transaction : transactions) {
             if (transaction.getAmount() < 0) {
                 payments.add(transaction);
             }
@@ -373,8 +342,6 @@ public class App {
 
         return payments;
     }
-
-
 
     private static ArrayList<Transaction> getMonthToDateTransactions() {
         LocalDate today = LocalDate.now();
@@ -385,7 +352,7 @@ public class App {
 
         ArrayList<Transaction> filteredByMonthTransactions = new ArrayList<>();
 
-        for (Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             LocalDate transactionDate = transaction.getDate();
             if (transactionDate.isAfter(firstDayOfMonth) && transactionDate.isBefore(today)) {
                 filteredByMonthTransactions.add(transaction);
@@ -403,7 +370,7 @@ public class App {
 
         ArrayList<Transaction> filteredByYearTransactions = new ArrayList<>();
 
-        for (Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             LocalDate transactionDate = transaction.getDate();
             if (transactionDate.isAfter(firstDayOfYear) && transactionDate.isBefore(today)) {
                 filteredByYearTransactions.add(transaction);
@@ -427,7 +394,7 @@ public class App {
 
         ArrayList<Transaction> filteredByMonthTransactions = new ArrayList<>();
 
-        for (Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             LocalDate transactionDate = transaction.getDate();
             if (transactionDate.isAfter(firstDayOfPreviousMonth) && transactionDate.isBefore(firstDayOfCurrentMonth)) {
                 filteredByMonthTransactions.add(transaction);
@@ -447,7 +414,7 @@ public class App {
 
         ArrayList<Transaction> filteredByYearTransactions = new ArrayList<>();
 
-        for (Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             LocalDate transactionDate = transaction.getDate();
             if (transactionDate.isAfter(firstDayOfPreviousYear) && transactionDate.isBefore(firstDayOfCurrentYear)) {
                 filteredByYearTransactions.add(transaction);
@@ -516,7 +483,7 @@ public class App {
     private static ArrayList<Transaction> filterByVendor(String vendor) {
         ArrayList<Transaction> transactionsByVendor = new ArrayList<>();
 
-        for (Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             if (transaction.getVendor().toLowerCase().contains(vendor)) {
                 transactionsByVendor.add(transaction);
             }
@@ -568,7 +535,7 @@ public class App {
     private static ArrayList<Transaction> filterTransactionsByDescription(String description) {
         ArrayList<Transaction> filteredTransactionsByDescription = new ArrayList<>();
 
-        for (Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             String transactionDescription = transaction.getDescription();
             if (transactionDescription.contains(description)) {
                 filteredTransactionsByDescription.add(transaction);
@@ -580,7 +547,7 @@ public class App {
 
 
     // Write methods
-    private static Transaction createTransaction(boolean isDeposit, String filename) {
+    private static Transaction createTransaction(boolean isDeposit) {
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
 
@@ -600,22 +567,21 @@ public class App {
             }
         } else {
 
-        if (amount > 0) {
-            amount = -amount;
-        }
+            if (amount > 0) {
+                amount = -amount;
+            }
         }
 
         Transaction transaction = new Transaction(date, time, description, vendor, amount);
 
         transactions.add(transaction);
 
-        try{
-            FileWriter writer = new FileWriter(filename, true);
-            writer.write("\n"+transaction.toCsv());
+        try {
+            FileWriter writer = new FileWriter(TRANSACTION_FILE, true);
+            writer.write("\n" + transaction.toCsv());
             writer.close();
         } catch (IOException e) {
-            System.out.println("Error:");
-            System.out.println(e);
+            System.out.println("Error:" + e.getMessage());
         }
 
         return transaction;
@@ -626,19 +592,18 @@ public class App {
     // Formatting methods
     public static void formatAsCard(ArrayList<Transaction> transactions) {
 
-            for (Transaction t : transactions) {
-                String colorAmount = t.getAmount() >= 0 ? AnsiColors.GREEN : AnsiColors.RED;
+        for (Transaction t : transactions) {
+            String colorAmount = t.getAmount() >= 0 ? AnsiColors.GREEN : AnsiColors.RED;
 
-                System.out.println(AnsiColors.BOLD + AnsiColors.WHITE + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
-                System.out.println(" " + AnsiColors.RESET + "  📅 Date:      " + AnsiColors.YELLOW + t.getDate() + AnsiColors.RESET );
-                System.out.println(" " + AnsiColors.RESET + "  ⏰ Time:      " + AnsiColors.YELLOW + t.getTime() + AnsiColors.RESET);
-                System.out.println(" " + AnsiColors.RESET + "  📝 Note:      " + AnsiColors.BLUE + t.getDescription() + AnsiColors.RESET);
-                System.out.println(" " + AnsiColors.RESET + "  🏷️ Vendor:    " + AnsiColors.CYAN + t.getVendor() + AnsiColors.RESET);
-                System.out.println(" " + AnsiColors.RESET + "  💰 Amount:    " + colorAmount + String.format("$%.2f", t.getAmount()) + AnsiColors.RESET);
-                System.out.println(AnsiColors.WHITE + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
-                System.out.println(); // space between cards
-            }
-
+            System.out.println(AnsiColors.BOLD + AnsiColors.WHITE + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+            System.out.println(" " + AnsiColors.RESET + "  📅 Date:      " + AnsiColors.YELLOW + t.getDate() + AnsiColors.RESET);
+            System.out.println(" " + AnsiColors.RESET + "  ⏰ Time:      " + AnsiColors.YELLOW + t.getTime() + AnsiColors.RESET);
+            System.out.println(" " + AnsiColors.RESET + "  📝 Note:      " + AnsiColors.BLUE + t.getDescription() + AnsiColors.RESET);
+            System.out.println(" " + AnsiColors.RESET + "  🏷️ Vendor:    " + AnsiColors.CYAN + t.getVendor() + AnsiColors.RESET);
+            System.out.println(" " + AnsiColors.RESET + "  💰 Amount:    " + colorAmount + String.format("$%.2f", t.getAmount()) + AnsiColors.RESET);
+            System.out.println(AnsiColors.WHITE + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
+            System.out.println(); // space between cards
+        }
 
 
     }
@@ -676,7 +641,6 @@ public class App {
         }
     }
 
-
     private static void displayReportResults(ArrayList<Transaction> transactions) {
         if (transactions.isEmpty()) {
             System.out.println("\n🤷‍♂️ No transactions found for ");
@@ -684,7 +648,5 @@ public class App {
             formatAsCard(transactions);
         }
     }
-
-
 
 }

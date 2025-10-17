@@ -15,6 +15,8 @@ This CLI application allows users to:
 
 ---
 
+![preview](screenshots/welcome.png)
+
 ## ✨ Key Features & Screens
 
 ### 🏠 Home Screen Options
@@ -25,6 +27,8 @@ This CLI application allows users to:
 - `[X]` **Exit**: Exit the application.
 
 ---
+
+![preview](screenshots/main_menu.png)
 
 ### 📒 Ledger Screen Options
 
@@ -38,6 +42,8 @@ The Ledger view is the hub for analyzing transactions (newest first):
 
 ---
 
+![preview](screenshots/cards.png)
+
 ### 📊 Reports Screen Options
 
 Perform in-depth analysis with several filters:
@@ -47,26 +53,39 @@ Perform in-depth analysis with several filters:
 - **Year To Date**: From January 1st to today.
 - **Previous Year**: Entire previous year.
 - **Search by Vendor**: Filter by vendor name.
-- **Custom Search (Challenge)**: Search by any combination of:
+- **Custom Search (Challenge)**: Search in range of:
     - Start Date
     - End Date
     - Description Keyword
     - Vendor Name
-    - Amount (optional)
+    - Amount
 
 - `Back`: Return to the Ledger Screen.
 
 ---
 
-## 💻 Interesting Code Segment: Custom Search Logic
+![preview](screenshots/search.png)
 
-The ***Custom Search*** is the most complex feature, allowing multi-parameter filtering. It uses Java Streams to handle filtering efficiently and gracefully skips criteria that are not provided by the user.
+## 💻 Interesting Code Segment: Animated, Rainbow Console Logo
+
+Implemented an animated, colored startup logo. This code snippet handles iterating through the characters of the logo string, applying a cyclical rainbow color, and adding a slight delay to create a retro typing animation effect.
 
 ### 🔍 Code Snippet
 
 ```java
-
-   ```
+        final String RESET = "\u001B[0m";
+        int colorIndex = 0;
+        try {
+            for (char ch : logo.toCharArray()) {
+                System.out.print(COLORS[colorIndex % COLORS.length] + ch);
+                Thread.sleep(1);
+                colorIndex++;
+            }
+            System.out.println(RESET);
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+```
 
 ---
 
