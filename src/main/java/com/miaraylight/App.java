@@ -3,15 +3,18 @@ package com.miaraylight;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
     final static Scanner scanner = new Scanner(System.in);
-    final static  ArrayList<Transaction> transactions = getAllTransactions("transactions.csv");
+    public static final String TRANSACTION_FILE = "transactions.csv";
+    final static  ArrayList<Transaction> transactions = getAllTransactions(TRANSACTION_FILE);
     public static void main(String[] args) {
-        System.out.println("Here is my ledger app lives");
-        runMainMenu();
+        runWelcome();
+
+        //runMainMenu();
     }
 
     // Run methods
@@ -25,18 +28,20 @@ public class App {
 
             switch (choice) {
                 case "D":
-                   createTransaction(true, "transactions.csv");
-                    System.out.println("Deposit added.");
+                   Transaction newDeposit = createTransaction(true, TRANSACTION_FILE);
+                   formatAsCard(newDeposit);
+                    System.out.println("✅ Deposit successfully added.");
                     break;
                 case "P":
-                    createTransaction(false, "transactions.csv");
-                    System.out.println("Payment recorded.");
+                    Transaction newPayment = createTransaction(false, TRANSACTION_FILE);
+                    formatAsCard(newPayment);
+                    System.out.println("💰 Payment successfully recorded.");
                     break;
                 case "L":
                     runLedgerMenu();
                     break;
                 case "X":
-                    System.out.println("Exiting");
+                    printGoodbye();
                     running = false;
                     break;
                 default:
@@ -55,30 +60,29 @@ public class App {
             String choice = scanner.nextLine().trim().toUpperCase();
 
             switch (choice) {
-                // ToDo make it pretty output later
                 case "A":
 
-                    System.out.println("Here is all transactions:");
-                    System.out.println(transactions);
+                    displayHeadline("All Transactions");
+                    formatAsCard(transactions);
 
                     break;
                 case "D":
 
-                    System.out.println("Here is all deposits:");
-                    System.out.println(getAllDeposits());
+                    displayHeadline("All Deposits");
+                    formatAsCard(getAllDeposits());
 
                     break;
                 case "P":
 
-                    System.out.println("Here is all payments:");
-                    System.out.println(getAllPayments());
+                    displayHeadline("All Payments");
+                    formatAsCard(getAllPayments());
 
                     break;
                 case "R":
-                    System.out.println(choice);
                     runReportMenu();
                     break;
                 case "H":
+                    System.out.println("Returning to Home Menu...");
                     running = false;
                     break;
                 default:
@@ -93,34 +97,24 @@ public class App {
 
         while (running) {
             displayReportMenu();
-            System.out.println("Choose an option: ");
-            String input = scanner.nextLine().trim();
-            int choice = -1;
+            int userInput = getIntInput("Choose an option: ");
 
 
-            try {
-                choice = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Provide numbers please");
-                System.out.println(e);
-            }
-
-
-            switch (choice) {
+            switch (userInput) {
                 case 1:
-                    System.out.println(getMonthToDateTransactions());
+                    displayReportResults(getMonthToDateTransactions());
 
                     break;
                 case 2:
-                    System.out.println(getPreviousMonthTransactions());
+                    displayReportResults(getPreviousMonthTransactions());
 
                     break;
                 case 3:
-                    System.out.println(getYearToDateTransactions());
+                    displayReportResults(getYearToDateTransactions());
 
                     break;
                 case 4:
-                    System.out.println(getPreviousYearTransactions());
+                    displayReportResults(getPreviousYearTransactions());
 
                     break;
                 case 5:
@@ -131,7 +125,7 @@ public class App {
                     running = false;
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("❌ Invalid choice. Please try again.");
             }
 
         }
@@ -142,79 +136,20 @@ public class App {
 
         while (running) {
             displaySearchMenu();
-            System.out.println("Choose an option: ");
-            String input = scanner.nextLine().trim();
-            int choice = -1;
+            int userInput = getIntInput("Choose an option: ");
 
-
-            try {
-                choice = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Provide numbers please");
-                System.out.println(e);
-            }
-
-            switch (choice) {
+            switch (userInput) {
                 case 1:
-                    System.out.println("Please enter start date ex. 2023-01-30:");
-                    LocalDate startDate = LocalDate.parse(scanner.nextLine().trim());
-
-                    System.out.println("Please enter end date ex. 2024-01-30:");
-                    LocalDate endDate = LocalDate.parse(scanner.nextLine().trim());
-
-                    if (endDate.isBefore(startDate)) {
-                        System.out.println("Error: invalid end date provided");
-                        break;
-                    }
-
-                    System.out.println(filterByDate(startDate, endDate));
-
+                    searchByDateRange();
                     break;
                 case 2:
-
-                    System.out.println("Desc");
-                    System.out.println("Please enter description:");
-                    String description = scanner.nextLine().trim();
-
-                    if (description.isEmpty() || description.isBlank()) {
-                        System.out.println("Enter something please");
-                        break;
-                    }
-
-                    ArrayList<Transaction> result = filterTransactionsByDescription(description);
-
-                    if (result.isEmpty()) {
-                        System.out.println("Nothing found");
-                        break;
-                    }
-
-                    System.out.println(filterTransactionsByDescription(description));
-
+                    searchByDescription();
                     break;
                 case 3:
-                    System.out.println("Please enter vendors name:");
-                    String vendor = scanner.nextLine().trim().toLowerCase();
-                    System.out.println(findByVendor(vendor));
-
+                    searchByVendor();
                     break;
                 case 4:
-
-                    System.out.println("Amount");
-                    System.out.println("Please enter lowest amount:");
-                    float lowAmount = scanner.nextFloat();
-                    scanner.nextLine();
-
-                    System.out.println("Please enter highest amount:");
-                    float highAmount = scanner.nextFloat();
-                    scanner.nextLine();
-
-                    if (lowAmount > highAmount) {
-                        System.out.println("Error: invalid high amount provided");
-                        break;
-                    }
-
-                    System.out.println(filterByAmount(lowAmount, highAmount));
-
+                    searchByAmountRange();
                     break;
                 case 0:
                     running = false;
@@ -229,35 +164,161 @@ public class App {
 
     // Display methods
     private static void displaySearchMenu() {
-    System.out.println("[1] Date");
-    System.out.println("[2] Description");
-    System.out.println("[3] Vendor");
-    System.out.println("[4] Amount");
-    System.out.println("[0] Back");
-}
+        System.out.println(AnsiColors.BOLD + AnsiColors.BLUE + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+        System.out.println(AnsiColors.BLUE + "              🔍 Search Menu        " + AnsiColors.RESET);
+        System.out.println(AnsiColors.BLUE + "╠════════════════════════════════════════════╣" + AnsiColors.RESET);
+
+        System.out.println("  " + AnsiColors.YELLOW + "[1]" + AnsiColors.RESET + " 📅 Search by Date        ");
+        System.out.println("  " + AnsiColors.BLUE + "[2]" + AnsiColors.RESET + " 📝 Search by Description ");
+        System.out.println("  " + AnsiColors.GREEN + "[3]" + AnsiColors.RESET + " 🏷️  Search by Vendor      ");
+        System.out.println("  " + AnsiColors.CYAN + "[4]" + AnsiColors.RESET + " 💵 Search by Amount       ");
+        System.out.println("  " + AnsiColors.RED + "[0]" + AnsiColors.RESET + " 🔙 Back to Reports        ");
+
+        System.out.println(AnsiColors.CYAN + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
+    }
 
     private static void displayReportMenu() {
-        System.out.println("[1] Month To Date");
-        System.out.println("[2] Previous Month");
-        System.out.println("[3] Year To Date");
-        System.out.println("[4] Previous Year");
-        System.out.println("[5] Custom search");
-        System.out.println("[0] Back");
+        System.out.println(AnsiColors.BOLD + AnsiColors.CYAN + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+        System.out.println(AnsiColors.CYAN + "              📊 Reports Menu        " + AnsiColors.RESET);
+        System.out.println(AnsiColors.CYAN + "╠════════════════════════════════════════════╣" + AnsiColors.RESET);
+
+        System.out.println("  " + AnsiColors.YELLOW + "[1]" + AnsiColors.RESET + " 📆 Month To Date            ");
+        System.out.println("  " + AnsiColors.BLUE + "[2]" + AnsiColors.RESET + " ⏪ Previous Month           ");
+        System.out.println("  " + AnsiColors.CYAN + "[3]" + AnsiColors.RESET + " 🗓️  Year To Date            ");
+        System.out.println("  " + AnsiColors.GREEN + "[4]" + AnsiColors.RESET + " 📉 Previous Year            ");
+        System.out.println("  " + AnsiColors.PURPLE + "[5]" + AnsiColors.RESET + " 🔎 Custom Search            ");
+        System.out.println("  " + AnsiColors.RED + "[0]" + AnsiColors.RESET + " 🔙 Back to Ledger           ");
+
+        System.out.println(AnsiColors.BLUE + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
     }
 
     private static void displayLedgerMenu() {
-        System.out.println("[A] All");
-        System.out.println("[D] Deposits");
-        System.out.println("[P] Payments");
-        System.out.println("[R] Reports");
-        System.out.println("[H] Home");
+        System.out.println(AnsiColors.BOLD + AnsiColors.BLUE + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+        System.out.println(AnsiColors.BLUE + "               📒 Ledger Menu                " + AnsiColors.RESET);
+        System.out.println(AnsiColors.BLUE + "╠════════════════════════════════════════════╣" + AnsiColors.RESET);
+
+        System.out.println("  " + AnsiColors.YELLOW + "[A]" + AnsiColors.RESET + " 📋 View All Transactions               ");
+        System.out.println("  " + AnsiColors.GREEN + "[D]" + AnsiColors.RESET + " 💰 View Deposits                       ");
+        System.out.println("  " + AnsiColors.RED + "[P]" + AnsiColors.RESET + " 💸 View Payments                       ");
+        System.out.println("  " + AnsiColors.CYAN + "[R]" + AnsiColors.RESET + " 📊 Reports Menu                        ");
+        System.out.println("  " + AnsiColors.PURPLE + "[H]" + AnsiColors.RESET + " 🔙 Return to Home Menu                 ");
+
+        System.out.println(AnsiColors.BLUE + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
     }
 
     private static void displayMainMenu() {
-        System.out.println("[D] Add Deposit");
-        System.out.println("[P] Make Payment (Debit)");
-        System.out.println("[L] Ledger");
-        System.out.println("[X] Exit");
+        System.out.println(AnsiColors.BOLD + AnsiColors.CYAN + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+        System.out.println(AnsiColors.CYAN + "              🏠 Main Menu                   " + AnsiColors.RESET);
+        System.out.println(AnsiColors.CYAN + "╠════════════════════════════════════════════╣" + AnsiColors.RESET);
+
+        System.out.println("  " + AnsiColors.GREEN + "[D]" + AnsiColors.RESET + " ➕ Add Deposit                        ");
+        System.out.println("  " + AnsiColors.RED + "[P]" + AnsiColors.RESET + " ➖ Make Payment (Debit)                ");
+        System.out.println("  " + AnsiColors.YELLOW + "[L]" + AnsiColors.RESET + " 📒 View Ledger                         ");
+        System.out.println("  " + AnsiColors.PURPLE + "[X]" + AnsiColors.RESET + " ❌ Exit Application                    ");
+
+        System.out.println(AnsiColors.CYAN + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
+    }
+
+    public static void printGoodbye() {
+        System.out.println();
+        System.out.println(AnsiColors.GREEN + AnsiColors.BOLD +
+                "\nThanks for using LedgerOne! ✨\nKeep tracking your finances like a pro! 💼💸" + AnsiColors.RESET);
+    }
+
+    public static void displayHeadline(String text) {
+        String formattedStr = String.format("         %s           ", text);
+        System.out.println(AnsiColors.BLUE + AnsiColors.BOLD +
+                "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+        System.out.println( AnsiColors.YELLOW + formattedStr + AnsiColors.RESET);
+        System.out.println("╚════════════════════════════════════════════╝" + AnsiColors.RESET);
+    }
+
+    public static void runWelcome() {
+        final String logo1 = """
+                _______________________1¶¶¶_______________________
+                ________________________¶¶¶_______________________
+                ________________________¶¶¶_______________________
+                ___________¶1___¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶1___¶¶__________
+                _________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶________
+                _________¶¶¶¶¶¶¶¶______¶¶¶¶1_____1¶¶¶¶¶¶¶1________
+                __________¶¶¶___________¶¶¶___________¶¶¶_________
+                __________¶¶¶___________¶¶¶___________¶¶¶_________
+                ________¶¶¶¶¶¶__________¶¶¶__________¶¶¶¶¶________
+                ________¶¶¶¶¶¶__________¶¶¶__________¶¶¶¶¶________
+                ________¶__¶_¶__________¶¶¶_________1¶_¶_¶1_______
+                _______1¶_¶¶_¶¶_________¶¶¶_________¶1_¶_1¶_______
+                _______¶¶_1¶__¶_________¶¶¶________¶¶__¶__¶¶______
+                ______¶¶__1¶__¶¶________¶¶¶________¶___¶___¶______
+                ______¶___¶¶___¶1_______¶¶¶_______¶¶___¶___¶¶_____
+                _____¶¶___¶¶___1¶_______¶¶¶______1¶____¶____¶1____
+                ____1¶____¶¶____¶¶______¶¶¶______¶1____¶____1¶____
+                ____¶1____¶¶_____¶______¶¶¶_____¶¶_____¶_____¶¶___
+                ___¶¶_____¶¶_____¶¶_____¶¶¶_____¶______¶______¶___
+                ___¶______¶¶______¶¶____¶¶¶____¶¶______¶______¶¶__
+                __¶________¶_______¶____¶¶¶____¶_______¶_______¶__
+                ¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶__¶¶¶_1¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶
+                ¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶1_¶¶¶_¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶
+                _¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶___¶¶¶__1¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶
+                ___¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶_____¶¶¶_____¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶1__
+                ______1¶¶¶¶¶¶¶¶1___1¶¶¶¶¶¶¶¶¶¶¶____¶¶¶¶¶¶¶¶¶______
+                ________________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶_______________
+                _______________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶_______________
+                ________________¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶_______________
+                """;
+        final String logo = """
+                    ▄                 █                        ▄▄▄▄              \s
+                    █       ▄▄▄    ▄▄▄█   ▄▄▄▄   ▄▄▄    ▄ ▄▄  ▄▀  ▀▄ ▄ ▄▄    ▄▄▄ \s
+                    █      █▀  █  █▀ ▀█  █▀ ▀█  █▀  █   █▀  ▀ █    █ █▀  █  █▀  █\s
+                    █      █▀▀▀▀  █   █  █   █  █▀▀▀▀   █     █    █ █   █  █▀▀▀▀\s
+                    █▄▄▄▄▄ ▀█▄▄▀  ▀█▄██  ▀█▄▀█  ▀█▄▄▀   █      █▄▄█  █   █  ▀█▄▄▀\s
+                                          ▄  █                                   \s
+                                           ▀▀                                    \s""";
+
+        final String[] COLORS = {
+                "\u001B[31m", // Red
+                "\u001B[33m", // Yellow
+                "\u001B[32m", // Green
+                "\u001B[36m", // Cyan
+                "\u001B[34m", // Blue
+                "\u001B[35m", // Magenta
+                "\u001B[91m", // Bright Red
+                "\u001B[92m", // Bright Green
+                "\u001B[93m", // Bright Yellow
+                "\u001B[94m", // Bright Blue
+        };
+
+
+        final String RESET = "\u001B[0m";
+        int colorIndex = 0;
+        try {
+            for (char ch : logo.toCharArray()) {
+                System.out.print(COLORS[colorIndex % COLORS.length] + ch);
+                Thread.sleep(1);
+                colorIndex++;
+            }
+            System.out.println(RESET);
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
+
+        // welcome banner
+        System.out.println(AnsiColors.BLUE + AnsiColors.BOLD +
+                "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+        System.out.println(AnsiColors.YELLOW + "          💰 Welcome to LedgerOne 💰 " + AnsiColors.RESET);
+        System.out.println("╚════════════════════════════════════════════╝" + AnsiColors.RESET);
+
+        try {
+            for (int i = 0; i < 17; i++) {
+                System.out.print(COLORS[colorIndex % COLORS.length] + "^-^" + RESET);
+                Thread.sleep(20); // Adjust speed here (e.g., 50 or 10 ms)
+                colorIndex++;
+            }
+            System.out.println(); // Move to the next line after loading
+        } catch (InterruptedException e) {
+            System.out.println("Loading interrupted: " + e.getMessage());
+        }
+
+
     }
 
 
@@ -313,27 +374,14 @@ public class App {
         return payments;
     }
 
-    private static ArrayList<Transaction> findByVendor(String vendor) {
-        ArrayList<Transaction> transactionsByVendor = new ArrayList<>();
 
-        for (Transaction transaction: transactions) {
-            if (vendor.equals(transaction.getVendor().toLowerCase())) {
-                transactionsByVendor.add(transaction);
-            }
-        }
-
-        if(transactionsByVendor.isEmpty()) {
-            System.out.println("Nothing found by this vendor");
-        }
-
-        return transactionsByVendor;
-    }
 
     private static ArrayList<Transaction> getMonthToDateTransactions() {
         LocalDate today = LocalDate.now();
         LocalDate firstDayOfMonth = today.withDayOfMonth(1);
 
-        System.out.printf("Transactions from %s to %s \n", firstDayOfMonth, today);
+        String info = String.format("\nTransactions from %s to %s \n", firstDayOfMonth, today);
+        displayHeadline(info);
 
         ArrayList<Transaction> filteredByMonthTransactions = new ArrayList<>();
 
@@ -342,10 +390,6 @@ public class App {
             if (transactionDate.isAfter(firstDayOfMonth) && transactionDate.isBefore(today)) {
                 filteredByMonthTransactions.add(transaction);
             }
-        }
-
-        if (filteredByMonthTransactions.isEmpty()) {
-            System.out.println("No transactions at this month");
         }
 
         return filteredByMonthTransactions;
@@ -378,7 +422,8 @@ public class App {
         LocalDate firstDayOfCurrentMonth = today.withDayOfMonth(1);
         LocalDate firstDayOfPreviousMonth = firstDayOfCurrentMonth.minusMonths(1);
 
-        System.out.printf("Transactions from %s to %s \n", firstDayOfPreviousMonth, firstDayOfCurrentMonth);
+        String info = String.format("Transactions from %s to %s \n", firstDayOfPreviousMonth, firstDayOfCurrentMonth);
+        displayHeadline(info);
 
         ArrayList<Transaction> filteredByMonthTransactions = new ArrayList<>();
 
@@ -389,10 +434,6 @@ public class App {
             }
         }
 
-        if (filteredByMonthTransactions.isEmpty()) {
-            System.out.println("No transactions for previous month");
-        }
-
         return filteredByMonthTransactions;
     }
 
@@ -401,7 +442,8 @@ public class App {
         LocalDate firstDayOfCurrentYear = today.withMonth(1).withDayOfMonth(1);
         LocalDate firstDayOfPreviousYear = firstDayOfCurrentYear.minusYears(1);
 
-        System.out.printf("Transactions from %s to %s \n", firstDayOfPreviousYear, firstDayOfCurrentYear);
+        String info = String.format("Transactions from %s to %s \n", firstDayOfPreviousYear, firstDayOfCurrentYear);
+        displayHeadline(info);
 
         ArrayList<Transaction> filteredByYearTransactions = new ArrayList<>();
 
@@ -412,11 +454,37 @@ public class App {
             }
         }
 
-        if (filteredByYearTransactions.isEmpty()) {
-            System.out.println("No transactions for previous year");
+        return filteredByYearTransactions;
+    }
+
+    private static void searchByDateRange() {
+        LocalDate startDate;
+        LocalDate endDate;
+
+        try {
+            System.out.print("Please enter START date (ex. 2023-01-30): ");
+            startDate = LocalDate.parse(scanner.nextLine().trim());
+        } catch (DateTimeParseException e) {
+            System.out.println("❌ Invalid date format. Please use YYYY-MM-DD.");
+            return;
         }
 
-        return filteredByYearTransactions;
+        try {
+            System.out.print("Please enter END date (ex. 2024-01-30): ");
+            endDate = LocalDate.parse(scanner.nextLine().trim());
+        } catch (DateTimeParseException e) {
+            System.out.println("❌ Invalid date format. Please use YYYY-MM-DD.");
+            return;
+        }
+
+        if (endDate.isBefore(startDate)) {
+            System.out.println("⚠️ Error: End date cannot be before the start date.");
+            return;
+        }
+
+        ArrayList<Transaction> result = filterByDate(startDate, endDate);
+        displayHeadline("Date Range (" + startDate + " to " + endDate + ")");
+        displayReportResults(result);
     }
 
     private static ArrayList<Transaction> filterByDate(LocalDate startDate, LocalDate endDate) {
@@ -429,11 +497,46 @@ public class App {
             }
         }
 
-        if (filteredByDateTransactions.isEmpty()) {
-            System.out.println("No transactions for this date");
+        return filteredByDateTransactions;
+    }
+
+    private static void searchByVendor() {
+        System.out.print("Please enter vendor's name: ");
+        String vendor = scanner.nextLine().trim().toLowerCase();
+
+        if (vendor.isEmpty()) {
+            System.out.println("⚠️ Vendor name cannot be empty.");
+            return;
         }
 
-        return filteredByDateTransactions;
+        ArrayList<Transaction> result = filterByVendor(vendor);
+        displayReportResults(result);
+    }
+
+    private static ArrayList<Transaction> filterByVendor(String vendor) {
+        ArrayList<Transaction> transactionsByVendor = new ArrayList<>();
+
+        for (Transaction transaction: transactions) {
+            if (transaction.getVendor().toLowerCase().contains(vendor)) {
+                transactionsByVendor.add(transaction);
+            }
+        }
+
+        return transactionsByVendor;
+    }
+
+    private static void searchByAmountRange() {
+        float lowAmount = getFloatInput("Please enter LOWEST amount: ");
+        float highAmount = getFloatInput("Please enter HIGHEST amount: ");
+
+        if (lowAmount > highAmount) {
+            System.out.println("⚠️ Error: Highest amount cannot be less than the lowest amount.");
+            return;
+        }
+
+        ArrayList<Transaction> result = filterByAmount(lowAmount, highAmount);
+        displayHeadline("Amount Range: $" + lowAmount + " to $" + highAmount);
+        displayReportResults(result);
     }
 
     private static ArrayList<Transaction> filterByAmount(float lowAmount, float highAmount) {
@@ -446,11 +549,20 @@ public class App {
             }
         }
 
-        if (filteredByAmountTransactions.isEmpty()) {
-            System.out.println("No transactions in this range");
+        return filteredByAmountTransactions;
+    }
+
+    private static void searchByDescription() {
+        System.out.print("Please enter description keyword: ");
+        String description = scanner.nextLine().trim();
+
+        if (description.isEmpty() || description.isBlank()) {
+            System.out.println("⚠️ Description cannot be empty.");
+            return;
         }
 
-        return filteredByAmountTransactions;
+        ArrayList<Transaction> result = filterTransactionsByDescription(description);
+        displayReportResults(result);
     }
 
     private static ArrayList<Transaction> filterTransactionsByDescription(String description) {
@@ -466,8 +578,9 @@ public class App {
         return filteredTransactionsByDescription;
     }
 
+
     // Write methods
-    private static void createTransaction(boolean isDeposit, String filename) {
+    private static Transaction createTransaction(boolean isDeposit, String filename) {
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
 
@@ -505,7 +618,73 @@ public class App {
             System.out.println(e);
         }
 
+        return transaction;
+
     }
+
+
+    // Formatting methods
+    public static void formatAsCard(ArrayList<Transaction> transactions) {
+
+            for (Transaction t : transactions) {
+                String colorAmount = t.getAmount() >= 0 ? AnsiColors.GREEN : AnsiColors.RED;
+
+                System.out.println(AnsiColors.BOLD + AnsiColors.WHITE + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
+                System.out.println(" " + AnsiColors.RESET + "  📅 Date:      " + AnsiColors.YELLOW + t.getDate() + AnsiColors.RESET );
+                System.out.println(" " + AnsiColors.RESET + "  ⏰ Time:      " + AnsiColors.YELLOW + t.getTime() + AnsiColors.RESET);
+                System.out.println(" " + AnsiColors.RESET + "  📝 Note:      " + AnsiColors.BLUE + t.getDescription() + AnsiColors.RESET);
+                System.out.println(" " + AnsiColors.RESET + "  🏷️ Vendor:    " + AnsiColors.CYAN + t.getVendor() + AnsiColors.RESET);
+                System.out.println(" " + AnsiColors.RESET + "  💰 Amount:    " + colorAmount + String.format("$%.2f", t.getAmount()) + AnsiColors.RESET);
+                System.out.println(AnsiColors.WHITE + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
+                System.out.println(); // space between cards
+            }
+
+
+
+    }
+
+    public static void formatAsCard(Transaction transaction) {
+        // Reuse the logic for one card
+        ArrayList<Transaction> list = new ArrayList<>();
+        list.add(transaction);
+        formatAsCard(list); // Delegate to the list method
+    }
+
+    // Helpers
+
+    public static int getIntInput(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid input. Please enter a number.");
+            }
+        }
+    }
+
+    private static float getFloatInput(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            try {
+                return Float.parseFloat(input);
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+
+
+    private static void displayReportResults(ArrayList<Transaction> transactions) {
+        if (transactions.isEmpty()) {
+            System.out.println("\n🤷‍♂️ No transactions found for ");
+        } else {
+            formatAsCard(transactions);
+        }
+    }
+
 
 
 }
