@@ -73,17 +73,15 @@ Implemented an animated, colored startup logo. This code snippet handles iterati
 ### 🔍 Code Snippet
 
 ```java
-        final String RESET = "\u001B[0m";
-        int colorIndex = 0;
         try {
             for (char ch : logo.toCharArray()) {
-                System.out.print(COLORS[colorIndex % COLORS.length] + ch);
+                System.out.print(AnsiColors.RAINBOW_COLORS[colorIndex % AnsiColors.RAINBOW_COLORS.length] + ch);
                 Thread.sleep(1);
                 colorIndex++;
             }
-            System.out.println(RESET);
+            System.out.println(AnsiColors.RESET);
         } catch (InterruptedException e) {
-            System.out.println(e);
+            System.err.println("Error during logo animation:" + e.getMessage()); 
         }
 ```
 

@@ -45,7 +45,7 @@ public class App {
                     runLedgerMenu();
                     break;
                 case "X":
-                    printGoodbye();
+                    displayGoodbye();
                     running = false;
                     break;
                 default:
@@ -190,7 +190,7 @@ public class App {
         System.out.println("  " + AnsiColors.BLUE + "[2]" + AnsiColors.RESET + " ⏪ Previous Month           ");
         System.out.println("  " + AnsiColors.CYAN + "[3]" + AnsiColors.RESET + " 🗓️  Year To Date            ");
         System.out.println("  " + AnsiColors.GREEN + "[4]" + AnsiColors.RESET + " 📉 Previous Year            ");
-        System.out.println("  " + AnsiColors.PURPLE + "[5]" + AnsiColors.RESET + " 🔎 Custom Search            ");
+        System.out.println("  " + AnsiColors.MAGENTA + "[5]" + AnsiColors.RESET + " 🔎 Custom Search            ");
         System.out.println("  " + AnsiColors.RED + "[0]" + AnsiColors.RESET + " 🔙 Back to Ledger           ");
 
         System.out.println(AnsiColors.BLUE + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
@@ -205,7 +205,7 @@ public class App {
         System.out.println("  " + AnsiColors.GREEN + "[D]" + AnsiColors.RESET + " 💰 View Deposits                       ");
         System.out.println("  " + AnsiColors.RED + "[P]" + AnsiColors.RESET + " 💸 View Payments                       ");
         System.out.println("  " + AnsiColors.CYAN + "[R]" + AnsiColors.RESET + " 📊 Reports Menu                        ");
-        System.out.println("  " + AnsiColors.PURPLE + "[H]" + AnsiColors.RESET + " 🔙 Return to Home Menu                 ");
+        System.out.println("  " + AnsiColors.MAGENTA + "[H]" + AnsiColors.RESET + " 🔙 Return to Home Menu                 ");
 
         System.out.println(AnsiColors.BLUE + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
     }
@@ -218,12 +218,12 @@ public class App {
         System.out.println("  " + AnsiColors.GREEN + "[D]" + AnsiColors.RESET + " ➕ Add Deposit                        ");
         System.out.println("  " + AnsiColors.RED + "[P]" + AnsiColors.RESET + " ➖ Make Payment (Debit)                ");
         System.out.println("  " + AnsiColors.YELLOW + "[L]" + AnsiColors.RESET + " 📒 View Ledger                         ");
-        System.out.println("  " + AnsiColors.PURPLE + "[X]" + AnsiColors.RESET + " ❌ Exit Application                    ");
+        System.out.println("  " + AnsiColors.MAGENTA + "[X]" + AnsiColors.RESET + " ❌ Exit Application                    ");
 
         System.out.println(AnsiColors.CYAN + "╚════════════════════════════════════════════╝" + AnsiColors.RESET);
     }
 
-    public static void printGoodbye() {
+    public static void displayGoodbye() {
         System.out.println();
         System.out.println(AnsiColors.GREEN + AnsiColors.BOLD + "\nThanks for using LedgerOne! ✨\nKeep tracking your finances like a pro! 💼💸" + AnsiColors.RESET);
     }
@@ -246,48 +246,36 @@ public class App {
                                       ▄  █                                   \s
                                        ▀▀                                    \s""";
 
-        final String[] COLORS = {"\u001B[31m", // Red
-                "\u001B[33m", // Yellow
-                "\u001B[32m", // Green
-                "\u001B[36m", // Cyan
-                "\u001B[34m", // Blue
-                "\u001B[35m", // Magenta
-                "\u001B[91m", // Bright Red
-                "\u001B[92m", // Bright Green
-                "\u001B[93m", // Bright Yellow
-                "\u001B[94m", // Bright Blue
-        };
-
-
-        final String RESET = "\u001B[0m";
         int colorIndex = 0;
+
+        // --- Logo Animation ---
         try {
             for (char ch : logo.toCharArray()) {
-                System.out.print(COLORS[colorIndex % COLORS.length] + ch);
+                System.out.print(AnsiColors.RAINBOW_COLORS[colorIndex % AnsiColors.RAINBOW_COLORS.length] + ch);
                 Thread.sleep(1);
                 colorIndex++;
             }
-            System.out.println(RESET);
+            System.out.println(AnsiColors.RESET);
         } catch (InterruptedException e) {
-            System.out.println("Error:" + e.getMessage());
+            System.err.println("Error during logo animation:" + e.getMessage());
         }
 
-        // welcome banner
+        // --- Welcome Banner ---
         System.out.println(AnsiColors.BLUE + AnsiColors.BOLD + "╔════════════════════════════════════════════╗" + AnsiColors.RESET);
         System.out.println(AnsiColors.YELLOW + "          💰 Welcome to LedgerOne 💰 " + AnsiColors.RESET);
         System.out.println("╚════════════════════════════════════════════╝" + AnsiColors.RESET);
 
+        // --- Bottom Animation ---
         try {
             for (int i = 0; i < 17; i++) {
-                System.out.print(COLORS[colorIndex % COLORS.length] + "^-^" + RESET);
+                System.out.print(AnsiColors.RAINBOW_COLORS[colorIndex % AnsiColors.RAINBOW_COLORS.length] + "^-^" + AnsiColors.RESET);
                 Thread.sleep(20);
                 colorIndex++;
             }
             System.out.println();
         } catch (InterruptedException e) {
-            System.out.println("Loading interrupted: " + e.getMessage());
+            System.err.println("Loading interrupted:" + e.getMessage());
         }
-
 
     }
 
@@ -615,8 +603,8 @@ public class App {
         formatAsCard(list); // Delegate to the list method
     }
 
-    // Helpers
 
+    // Helpers
     public static int getIntInput(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -643,7 +631,7 @@ public class App {
 
     private static void displayReportResults(ArrayList<Transaction> transactions) {
         if (transactions.isEmpty()) {
-            System.out.println("\n🤷‍♂️ No transactions found for ");
+            System.out.println("\n🤷‍♂️ No transactions found");
         } else {
             formatAsCard(transactions);
         }
